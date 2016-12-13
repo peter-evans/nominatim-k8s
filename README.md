@@ -15,7 +15,7 @@ Tail the logs to verify the database has been built and Apache is serving reques
 ```
 docker logs -f <CONTAINER ID>
 ```
-Then point your web browser to http://localhost:8080/
+Then point your web browser to [http://localhost:8080/](http://localhost:8080/)
 
 ## Kubernetes Deployment
 [Nominatim](https://github.com/twain47/Nominatim)'s data import from the PBF file into PostgreSQL can take over an hour for a single country.
