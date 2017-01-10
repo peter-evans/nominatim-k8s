@@ -1,4 +1,5 @@
 FROM peterevans/trusty-gcloud:1.0
+FROM peterevans/trusty-gcloud:1.1
 
 MAINTAINER Peter Evans <pete.evans@gmail.com>
 
