@@ -53,7 +53,7 @@ RUN mkdir /nominatim \
  && curl --silent -L http://www.nominatim.org/release/Nominatim-$NOMINATIM_VERSION.tar.bz2 -o Nominatim-$NOMINATIM_VERSION.tar.bz2 \
  && tar xvf Nominatim-$NOMINATIM_VERSION.tar.bz2 \
  && rm Nominatim-$NOMINATIM_VERSION.tar.bz2 \
- && mv Nominatim-$NOMINATIM_VERSION src
+ && mv Nominatim-$NOMINATIM_VERSION src \
  && cd src \
  && ./configure \
  && make
