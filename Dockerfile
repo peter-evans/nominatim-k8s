@@ -1,18 +1,20 @@
-FROM peterevans/trusty-gcloud:1.0
 FROM peterevans/trusty-gcloud:1.1
 
 MAINTAINER Peter Evans <pete.evans@gmail.com>
+
+ENV NOMINATIM_VERSION 2.5.1
 
 # Let the container know that there is no TTY
 ENV DEBIAN_FRONTEND noninteractive
 
 # Set locale
 ENV LANG C.UTF-8
-RUN locale-gen en_US.UTF-8
-RUN update-locale LANG=en_US.UTF-8
+RUN locale-gen en_US.UTF-8 \
+ && update-locale LANG=en_US.UTF-8
 
 # Install packages
-RUN apt-get -y update --fix-missing && apt-get install -y -qq --no-install-recommends \
+RUN apt-get -y update \
+ && apt-get install -y -qq --no-install-recommends \
     build-essential \
     libxml2-dev \
     libpq-dev \
@@ -40,32 +42,33 @@ RUN apt-get -y update --fix-missing && apt-get install -y -qq --no-install-recom
     postgresql-contrib \
     postgresql-9.3-postgis-2.1 \
     postgresql-server-dev-9.3 \
-    curl && \
-    # Clean up
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /tmp/* /var/tmp/*
-
-WORKDIR /nominatim
+    curl \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* \
+ && rm -rf /tmp/* /var/tmp/*
 
 # Build Nominatim
-RUN curl --silent -L http://www.nominatim.org/release/Nominatim-2.5.1.tar.bz2 -o Nominatim-2.5.1.tar.bz2 \
- && tar xvf Nominatim-2.5.1.tar.bz2 \
- && mv Nominatim-2.5.1 src \
- && cd ./src \
+RUN mkdir /nominatim \
+ && cd /nominatim \
+ && curl --silent -L http://www.nominatim.org/release/Nominatim-$NOMINATIM_VERSION.tar.bz2 -o Nominatim-$NOMINATIM_VERSION.tar.bz2 \
+ && tar xvf Nominatim-$NOMINATIM_VERSION.tar.bz2 \
+ && rm Nominatim-$NOMINATIM_VERSION.tar.bz2 \
+ && mv Nominatim-$NOMINATIM_VERSION src
+ && cd src \
  && ./configure \
  && make
 
 # Create Nominatim website
-COPY local.php ./src/settings/local.php
-RUN rm -rf /var/www/html/* && ./src/utils/setup.php --create-website /var/www/html
+COPY local.php /nominatim/src/settings/local.php
+RUN rm -rf /var/www/html/* \
+ && /nominatim/src/utils/setup.php --create-website /var/www/html
 
 # Configure Apache
 COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Allow remote connections to PostgreSQL
-RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.3/main/pg_hba.conf && \
-    echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
+RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.3/main/pg_hba.conf \
+ && echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
 
 # Set the entrypoint
 COPY docker-entrypoint.sh /
