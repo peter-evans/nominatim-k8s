@@ -43,6 +43,7 @@ RUN apt-get -y update \
     postgresql-9.3-postgis-2.1 \
     postgresql-server-dev-9.3 \
     curl \
+    git \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/* /var/tmp/*
@@ -50,11 +51,9 @@ RUN apt-get -y update \
 # Build Nominatim
 RUN mkdir /nominatim \
  && cd /nominatim \
- && curl --silent -L http://www.nominatim.org/release/Nominatim-$NOMINATIM_VERSION.tar.bz2 -o Nominatim-$NOMINATIM_VERSION.tar.bz2 \
- && tar xvf Nominatim-$NOMINATIM_VERSION.tar.bz2 \
- && rm Nominatim-$NOMINATIM_VERSION.tar.bz2 \
- && mv Nominatim-$NOMINATIM_VERSION src \
+ && git clone --branch v$NOMINATIM_VERSION --depth 1 --recursive git://github.com/twain47/Nominatim.git ./src \
  && cd src \
+ && ./autogen.sh \
  && ./configure \
  && make
 
@@ -75,4 +74,5 @@ COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
+EXPOSE 5432
 EXPOSE 8080
