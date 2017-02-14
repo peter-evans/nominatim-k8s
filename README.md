@@ -3,6 +3,12 @@
 
 This Docker image and sample Kubernetes configuration files are one solution to persisting Nominatim data and providing immutable deployments.
 
+[![](https://images.microbadger.com/badges/image/peterevans/nominatim-k8s.svg)](https://microbadger.com/images/peterevans/nominatim-k8s "Get your own image badge on microbadger.com")
+
+## Supported tags and respective `Dockerfile` links
+
+- [`1.2.0`, `1.2`, `latest`  (*1.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/1.2)
+
 ## Usage
 The Docker image can be run standalone without Kubernetes:
 
