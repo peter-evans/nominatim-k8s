@@ -51,10 +51,8 @@ RUN apt-get -y update \
 # Build Nominatim
 RUN mkdir /nominatim \
  && cd /nominatim \
- && git clone --recursive git://github.com/twain47/Nominatim.git ./src \
+ && git clone --branch v$NOMINATIM_VERSION --depth 1 --recursive git://github.com/twain47/Nominatim.git ./src \
  && cd src \
- && git checkout v$NOMINATIM_VERSION \
- && git submodule update --recursive --init \
  && ./autogen.sh \
  && ./configure \
  && make
