@@ -1,9 +1,9 @@
 # Nominatim for Kubernetes
+[![](https://images.microbadger.com/badges/image/peterevans/nominatim-k8s.svg)](https://microbadger.com/images/peterevans/nominatim-k8s)
+
 [Nominatim](https://github.com/twain47/Nominatim) for Kubernetes on Google Container Engine (GKE).
 
 This Docker image and sample Kubernetes configuration files are one solution to persisting Nominatim data and providing immutable deployments.
-
-[![](https://images.microbadger.com/badges/image/peterevans/nominatim-k8s.svg)](https://microbadger.com/images/peterevans/nominatim-k8s "Get your own image badge on microbadger.com")
 
 ## Supported tags and respective `Dockerfile` links
 
