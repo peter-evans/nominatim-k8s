@@ -1,5 +1,6 @@
 # Nominatim for Kubernetes
 [![](https://images.microbadger.com/badges/image/peterevans/nominatim-k8s.svg)](https://microbadger.com/images/peterevans/nominatim-k8s)
+[![Build Status](https://travis-ci.org/peter-evans/nominatim-k8s.svg?branch=master)](https://travis-ci.org/peter-evans/nominatim-k8s)
 
 [Nominatim](https://github.com/twain47/Nominatim) for Kubernetes on Google Container Engine (GKE).
 
