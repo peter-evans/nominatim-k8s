@@ -17,7 +17,7 @@
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"",
 							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"Your test name\"] = jsonData[0].display_name === \"Alif Dhaalu, 20077, Maldives\";"
+							"tests[\"Returns type 'postcode'\"] = jsonData[0].type === \"postcode\";"
 						]
 					}
 				}
