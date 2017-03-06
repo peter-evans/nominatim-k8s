@@ -1,0 +1,35 @@
+{
+	"variables": [],
+	"info": {
+		"name": "nominatim",
+		"_postman_id": "473e7e1f-663c-d450-0479-19bf8758dcaf",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8080/search/20077?format=json",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Returns type 'postcode'\"] = jsonData[0].type === \"postcode\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/search/20077?format=json",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Tests the search endpoint."
+			},
+			"response": []
+		}
+	]
+}
