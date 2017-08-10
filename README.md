@@ -2,13 +2,14 @@
 [![](https://images.microbadger.com/badges/image/peterevans/nominatim-k8s.svg)](https://microbadger.com/images/peterevans/nominatim-k8s)
 [![Build Status](https://travis-ci.org/peter-evans/nominatim-k8s.svg?branch=master)](https://travis-ci.org/peter-evans/nominatim-k8s)
 
-[Nominatim](https://github.com/twain47/Nominatim) for Kubernetes on Google Container Engine (GKE).
+[Nominatim](https://github.com/openstreetmap/Nominatim) for Kubernetes on Google Container Engine (GKE).
 
 This Docker image and sample Kubernetes configuration files are one solution to persisting Nominatim data and providing immutable deployments.
 
 ## Supported tags and respective `Dockerfile` links
 
-- [`1.2.0`, `1.2`, `latest`  (*1.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/1.2)
+- [`2.0.0`, `2.0`, `latest`  (*2.0/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/2.0)
+- [`1.2.0`, `1.2` (*1.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/1.2)
 
 ## Usage
 The Docker image can be run standalone without Kubernetes:
@@ -25,7 +26,7 @@ docker logs -f <CONTAINER ID>
 Then point your web browser to [http://localhost:8080/](http://localhost:8080/)
 
 ## Kubernetes Deployment
-[Nominatim](https://github.com/twain47/Nominatim)'s data import from the PBF file into PostgreSQL can take over an hour for a single country.
+[Nominatim](https://github.com/openstreetmap/Nominatim)'s data import from the PBF file into PostgreSQL can take over an hour for a single country.
 If a pod in a deployment fails, waiting over an hour for a new pod to start could lead to loss of service.
 
 The sample Kubernetes files provide a means of persisting a single database in storage that is used by all pods in the deployment. 
