@@ -2,7 +2,7 @@ services:
   - docker
 
 install:
-  - docker build -t nominatim-k8s ./1.2
+  - docker build -t nominatim-k8s ./2.0
   - docker run -d -p 8080:8080 -e NOMINATIM_PBF_URL='http://download.geofabrik.de/asia/maldives-latest.osm.pbf' --name nominatim nominatim-k8s
 
 before_script:
