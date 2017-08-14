@@ -2,7 +2,7 @@ FROM peterevans/trusty-gcloud:1.2.7
 
 MAINTAINER Peter Evans <pete.evans@gmail.com>
 
-ENV NOMINATIM_VERSION 3.0.0
+ENV NOMINATIM_VERSION 3.0.1
 
 # Let the container know that there is no TTY
 ENV DEBIAN_FRONTEND noninteractive
@@ -49,6 +49,7 @@ RUN apt-get -y update \
 RUN cd /srv \
  && curl --silent -L http://www.nominatim.org/release/Nominatim-$NOMINATIM_VERSION.tar.bz2 -o v$NOMINATIM_VERSION.tar.bz2 \
  && tar xf v$NOMINATIM_VERSION.tar.bz2 \
+ && rm v$NOMINATIM_VERSION.tar.bz2 \
  && mv Nominatim-$NOMINATIM_VERSION nominatim \
  && cd nominatim \
  && mkdir build \
