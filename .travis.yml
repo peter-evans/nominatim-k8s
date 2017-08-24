@@ -1,9 +1,19 @@
 services:
   - docker
 
+env:
+  global:
+    - RELEASE_VERSION=2.1
+    - NOMINATIM_PBF_URL="http://download.geofabrik.de/asia/maldives-latest.osm.pbf"
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - docker --version
+
 install:
-  - docker build -t nominatim-k8s ./2.0
-  - docker run -d -p 8080:8080 -e NOMINATIM_PBF_URL='http://download.geofabrik.de/asia/maldives-latest.osm.pbf' --name nominatim nominatim-k8s
+  - docker build -t nominatim-k8s ./$RELEASE_VERSION
+  - docker run -d -p 8080:8080 -e NOMINATIM_PBF_URL=$NOMINATIM_PBF_URL --name nominatim nominatim-k8s
 
 before_script:
   - npm install newman --global
