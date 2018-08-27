@@ -3,7 +3,7 @@ services:
 
 env:
   global:
-    - RELEASE_VERSION=2.2
+    - RELEASE_VERSION=2.3
     - NOMINATIM_PBF_URL="http://download.geofabrik.de/asia/maldives-latest.osm.pbf"
 
 before_install:
