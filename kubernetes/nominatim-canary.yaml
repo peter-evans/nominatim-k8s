@@ -30,7 +30,7 @@ spec:
           secretName: nominatim-storage-secret
       containers:
       - name: nominatim-k8s
-        image: peterevans/nominatim-k8s:latest
+        image: us.gcr.io/is-pipeline/nominatim:2.3
         env:
         - name: NOMINATIM_MODE
           value: CREATE
