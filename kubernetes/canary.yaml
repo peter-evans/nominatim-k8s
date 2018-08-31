@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nominatim-1
+  namespace: maps
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: nominatim-1
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nominatim-canary-1
+  namespace: maps
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nominatim-1
+        track: canary
+    spec:
+      affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - nominatim
+                topologyKey: kubernetes.io/hostname
+      volumes:
+      - name: nominatim-secret-volume
+        secret:
+          secretName: nominatim-storage-secret
+      containers:
+      - name: nominatim-k8s
+        image: us.gcr.io/is-pipeline/nominatim:2.3.1
+        env:
+        - name: NOMINATIM_MODE
+          value: CREATE
+        - name: NOMINATIM_PBF_URL
+          value: "https://ftpmirror.your.org/pub/openstreetmap/pbf/planet-latest.osm.pbf"
+        - name: NOMINATIM_DATA_LABEL
+          value: maldives-20161213
+        - name: NOMINATIM_SA_KEY_PATH
+          value: "/etc/nominatim-secret-volume/service-account-key.json"
+        - name: NOMINATIM_PROJECT_ID
+          value: is-pipeline
+        - name: NOMINATIM_GS_BUCKET
+          value: "gs://twenty-maps"
+        volumeMounts:
+        - name: nominatim-secret-volume
+          readOnly: true
+          mountPath: /etc/nominatim-secret-volume
+        ports:
+        - containerPort: 8080
