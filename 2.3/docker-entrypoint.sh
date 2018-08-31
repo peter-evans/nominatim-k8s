@@ -19,7 +19,7 @@ NOMINATIM_GS_BUCKET=${NOMINATIM_GS_BUCKET:=""}
 if [ "$NOMINATIM_MODE" == "CREATE" ]; then
     
     # Retrieve the PBF file
-    curl $NOMINATIM_PBF_URL --create-dirs -o $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf
+    curl -L $NOMINATIM_PBF_URL --create-dirs -o $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf
     # Allow user accounts read access to the data
     chmod 755 $NOMINATIM_DATA_PATH
 
