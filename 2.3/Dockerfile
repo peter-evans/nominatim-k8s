@@ -81,6 +81,12 @@ COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
 RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.3/main/pg_hba.conf \
  && echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
 
+RUN apt-get -y update && \
+    apt-get -y install gcc python-dev python-setuptools && \
+    easy_install -U pip && \
+    pip uninstall crcmod && \
+    pip install -U crcmod
+
 # Set the entrypoint
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
