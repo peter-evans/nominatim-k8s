@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nominatim
+  namespace: maps
 spec:
   ports:
   - port: 80
@@ -14,6 +15,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: nominatim-canary
+  namespace: maps
 spec:
   replicas: 1
   template:
@@ -28,29 +30,23 @@ spec:
           secretName: nominatim-storage-secret
       containers:
       - name: nominatim-k8s
-        image: peterevans/nominatim-k8s:latest
+        image: us.gcr.io/is-pipeline/nominatim:2.3
         env:
         - name: NOMINATIM_MODE
           value: CREATE
         - name: NOMINATIM_PBF_URL
-          value: "http://download.geofabrik.de/asia/maldives-latest.osm.pbf"
+          value: "https://ftpmirror.your.org/pub/openstreetmap/pbf/planet-latest.osm.pbf"
         - name: NOMINATIM_DATA_LABEL
           value: maldives-20161213
         - name: NOMINATIM_SA_KEY_PATH
           value: "/etc/nominatim-secret-volume/service-account-key.json"
         - name: NOMINATIM_PROJECT_ID
-          value: my-project
+          value: is-pipeline
         - name: NOMINATIM_GS_BUCKET
-          value: "gs://my-bucket"
+          value: "gs://twenty-maps"
         volumeMounts:
         - name: nominatim-secret-volume
           readOnly: true
           mountPath: /etc/nominatim-secret-volume
         ports:
         - containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: /search
-            port: 8080
-          initialDelaySeconds: 30
-          timeoutSeconds: 1
