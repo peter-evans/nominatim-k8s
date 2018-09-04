@@ -1,7 +1,34 @@
+#ingress with LB
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: maps-ingress
+  namespace: maps
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.global-static-ip-name: "maps-public-ip"
+spec:
+  tls:
+  - secretName: ssl-certs
+  backend:
+    # Re-use kong-proxy as the default backend so we stay under the default
+    # quota for gce BackendServices.
+    serviceName: nominatim
+    servicePort: 80
+  rules:
+  - host: maps.twenty.co
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: nominatim
+          servicePort: 80
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: nominatim
+  namespace: maps
 spec:
   ports:
   - port: 80
@@ -14,6 +41,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: nominatim
+  namespace: maps
 spec:
   replicas: 3
   template:
@@ -22,13 +50,25 @@ spec:
         app: nominatim
         track: stable
     spec:
+      affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - nominatim
+                topologyKey: kubernetes.io/hostname
       volumes:
       - name: nominatim-secret-volume
         secret:
           secretName: nominatim-storage-secret
       containers:
       - name: nominatim-k8s
-        image: peterevans/nominatim-k8s:latest
+        image: us.gcr.io/is-pipeline/nominatim:2.3-custom
         env:
         - name: NOMINATIM_MODE
           value: RESTORE
@@ -37,9 +77,9 @@ spec:
         - name: NOMINATIM_SA_KEY_PATH
           value: "/etc/nominatim-secret-volume/service-account-key.json"
         - name: NOMINATIM_PROJECT_ID
-          value: my-project
+          value: is-pipeline
         - name: NOMINATIM_GS_BUCKET
-          value: "gs://my-bucket"
+          value: "gs://twenty-maps"
         volumeMounts:
         - name: nominatim-secret-volume
           readOnly: true
@@ -50,5 +90,5 @@ spec:
           httpGet:
             path: /search
             port: 8080
-          initialDelaySeconds: 30
-          timeoutSeconds: 1
+          initialDelaySeconds: 2500
+          timeoutSeconds: 10
