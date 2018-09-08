@@ -1,4 +1,4 @@
-FROM peterevans/trusty-gcloud:1.2.17 as builder
+FROM peterevans/trusty-gcloud:1.2.19 as builder
 
 MAINTAINER Peter Evans <pete.evans@gmail.com>
 
@@ -42,7 +42,7 @@ RUN cd /srv \
  && make
 
 
-FROM peterevans/trusty-gcloud:1.2.17
+FROM peterevans/trusty-gcloud:1.2.19
 
 # Let the container know that there is no TTY
 ARG DEBIAN_FRONTEND=noninteractive
