@@ -5,7 +5,7 @@ MAINTAINER Peter Evans <pete.evans@gmail.com>
 ENV NOMINATIM_VERSION 3.2.0
 
 # Let the container know that there is no TTY
-ENV DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Install packages
 RUN apt-get -y update \
@@ -45,7 +45,7 @@ RUN cd /srv \
 FROM peterevans/trusty-gcloud:1.2.17
 
 # Let the container know that there is no TTY
-ENV DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Set locale and install packages
 ENV LANG C.UTF-8
