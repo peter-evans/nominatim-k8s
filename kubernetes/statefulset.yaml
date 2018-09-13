@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: maps-volume
+  labels:
+    failure-domain.beta.kubernetes.io/zone: us-east1-b
+    name: maps-volume
+spec:
+  capacity:
+    storage: 2500Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: maps-volume-nominatim-0
+    namespace: default
+  accessModes:
+  - ReadOnlyMany
+  gcePersistentDisk:
+    pdName: maps-unarchive-copy
+    fsType: ext4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: maps-volume1
+  labels:
+    failure-domain.beta.kubernetes.io/zone: us-east1-b
+    name: maps-volume
+spec:
+  capacity:
+    storage: 2500Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: maps-volume-nominatim-1
+    namespace: default
+  accessModes:
+  - ReadOnlyMany
+  gcePersistentDisk:
+    pdName: maps-unarchive-copy1
+    fsType: ext4
+---
+#ingress with LB
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: maps-ingress
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.global-static-ip-name: "maps-persistant"
+spec:
+  tls:
+  - secretName: ssl-certs
+  backend:
+    # Re-use kong-proxy as the default backend so we stay under the default
+    # quota for gce BackendServices.
+    serviceName: nominatim
+    servicePort: 80
+  rules:
+  - host: map.twenty.co
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: nominatim
+          servicePort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nominatim
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: nominatim
+---
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: nominatim
+spec:
+  selector:
+    matchLabels:
+      app: nominatim
+  replicas: 1
+  serviceName: nominatim
+  template:
+    metadata:
+      labels:
+        app: nominatim
+        track: stable
+    spec:
+      containers:
+      - env:
+        - name: NOMINATIM_MODE
+          value: RESTORE
+        - name: NOMINATIM_DATA_PATH
+          value: /srv/nominatim/data
+        - name: NOMINATIM_POSTGRESQL_DATA_PATH
+          value: /var/lib/postgresql/9.3/main
+        - name: NOMINATIM_PBF_URL
+          value: "https://ftpmirror.your.org/pub/openstreetmap/pbf/planet-latest.osm.pbf"
+        - name: NOMINATIM_DATA_LABEL
+          value: planet-latest-2018
+        - name: NOMINATIM_SA_KEY_PATH
+          value: "/etc/nominatim-secret-volume/nominatim-key.json"
+        - name: NOMINATIM_PROJECT_ID
+          value: is-sandbox
+        - name: NOMINATIM_GS_BUCKET
+          value: "gs://nominatim11"
+        image: gcr.io/is-pipeline/maps-persistence:latest
+        imagePullPolicy: Always
+        name: nominatim
+        ports:
+        - containerPort: 8080
+          name: nominatim
+        volumeMounts:
+        - name: maps-volume
+          mountPath: /var/lib/postgresql/9.3/main
+  volumeClaimTemplates:
+  - metadata:
+      name: maps-volume
+    spec:
+      accessModes:
+        - ReadOnlyMany
+      resources:
+        requests:
+          storage: 2500Gi
