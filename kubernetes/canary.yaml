@@ -1,33 +1,7 @@
-#ingress with LB
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: maps-ingress
-  namespace: maps
-  annotations:
-    kubernetes.io/ingress.allow-http: "false"
-    kubernetes.io/ingress.global-static-ip-name: "maps-public-ip"
-spec:
-  tls:
-  - secretName: ssl-certs
-  backend:
-    # Re-use kong-proxy as the default backend so we stay under the default
-    # quota for gce BackendServices.
-    serviceName: nominatim
-    servicePort: 80
-  rules:
-  - host: maps.twenty.co
-    http:
-      paths:
-      - path: /*
-        backend:
-          serviceName: nominatim
-          servicePort: 80
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: nominatim
+  name: nominatim-1
   namespace: maps
 spec:
   ports:
@@ -35,20 +9,20 @@ spec:
     targetPort: 8080
     protocol: TCP
   selector:
-    app: nominatim
+    app: nominatim-1
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: nominatim
+  name: nominatim-canary-1
   namespace: maps
 spec:
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
-        app: nominatim
-        track: stable
+        app: nominatim-1
+        track: canary
     spec:
       affinity:
           podAntiAffinity:
@@ -68,10 +42,12 @@ spec:
           secretName: nominatim-storage-secret
       containers:
       - name: nominatim-k8s
-        image: us.gcr.io/is-pipeline/nominatim:2.3-custom
+        image: us.gcr.io/is-pipeline/nominatim:2.3.1
         env:
         - name: NOMINATIM_MODE
-          value: RESTORE
+          value: CREATE
+        - name: NOMINATIM_PBF_URL
+          value: "https://ftpmirror.your.org/pub/openstreetmap/pbf/planet-latest.osm.pbf"
         - name: NOMINATIM_DATA_LABEL
           value: maldives-20161213
         - name: NOMINATIM_SA_KEY_PATH
@@ -86,9 +62,3 @@ spec:
           mountPath: /etc/nominatim-secret-volume
         ports:
         - containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: /search
-            port: 8080
-          initialDelaySeconds: 2500
-          timeoutSeconds: 10

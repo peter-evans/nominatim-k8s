@@ -19,7 +19,7 @@ NOMINATIM_GS_BUCKET=${NOMINATIM_GS_BUCKET:=""}
 if [ "$NOMINATIM_MODE" == "CREATE" ]; then
     
     # Retrieve the PBF file
-    curl -L $NOMINATIM_PBF_URL --create-dirs -o $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf
+    curl $NOMINATIM_PBF_URL --create-dirs -o $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf
     # Allow user accounts read access to the data
     chmod 755 $NOMINATIM_DATA_PATH
 
@@ -31,7 +31,7 @@ if [ "$NOMINATIM_MODE" == "CREATE" ]; then
     sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data
     sudo -u postgres psql postgres -c "DROP DATABASE IF EXISTS nominatim"
     useradd -m -p password1234 nominatim
-    sudo -u nominatim /srv/nominatim/build/utils/setup.php --osm-file $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf --all --osm2pgsql-cache 28000 --threads 8
+    sudo -u nominatim /srv/nominatim/build/utils/setup.php --osm-file $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf --all --threads 2
 
     if [ ! -z "$NOMINATIM_SA_KEY_PATH" ] && [ ! -z "$NOMINATIM_PROJECT_ID" ] && [ ! -z "$NOMINATIM_GS_BUCKET" ]; then
     
@@ -57,21 +57,6 @@ if [ "$NOMINATIM_MODE" == "CREATE" ]; then
 else
 
     if [ ! -z "$NOMINATIM_SA_KEY_PATH" ] && [ ! -z "$NOMINATIM_PROJECT_ID" ] && [ ! -z "$NOMINATIM_GS_BUCKET" ]; then
-    
-        # Activate the service account to access storage
-        gcloud auth activate-service-account --key-file $NOMINATIM_SA_KEY_PATH
-        # Set the Google Cloud project ID
-        gcloud config set project $NOMINATIM_PROJECT_ID
-
-        # Copy the archive from storage
-        mkdir -p $NOMINATIM_DATA_PATH
-        gsutil -m cp $NOMINATIM_GS_BUCKET/$NOMINATIM_DATA_LABEL/*.tgz* $NOMINATIM_DATA_PATH
-
-        # Remove any files present in the target directory
-        rm -rf $NOMINATIM_POSTGRESQL_DATA_PATH/*
-        
-        # Extract the archive
-        cat $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.tgz_* | tar xz -C $NOMINATIM_POSTGRESQL_DATA_PATH --strip-components=5
         
         # Start PostgreSQL
         service postgresql start
@@ -80,8 +65,11 @@ else
     
 fi
 
-# Tail Apache logs
+# Tail Apache logs and start nginx
 tail -f /var/log/apache2/* &
-
+mkdir -p /run/nginx/
+touch /run/nginx/nginx.pid
+cp /etc/nginx-conf/default.conf /etc/nginx/conf.d/default.conf
+nginx -g "daemon on;"
 # Run Apache in the foreground
 /usr/sbin/apache2ctl -D FOREGROUND
