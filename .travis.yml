@@ -3,7 +3,6 @@ services:
 
 env:
   global:
-    - RELEASE_VERSION=2.3
     - NOMINATIM_PBF_URL="http://download.geofabrik.de/asia/maldives-latest.osm.pbf"
 
 before_install:
@@ -12,7 +11,7 @@ before_install:
   - docker --version
 
 install:
-  - docker build -t nominatim-k8s ./$RELEASE_VERSION
+  - docker build -t nominatim-k8s .
   - docker run -d -p 8080:8080 -e NOMINATIM_PBF_URL=$NOMINATIM_PBF_URL --name nominatim nominatim-k8s
 
 before_script:

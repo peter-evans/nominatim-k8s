@@ -1,6 +1,7 @@
 # Nominatim for Kubernetes
 [![](https://images.microbadger.com/badges/image/peterevans/nominatim-k8s.svg)](https://microbadger.com/images/peterevans/nominatim-k8s)
 [![Build Status](https://travis-ci.org/peter-evans/nominatim-k8s.svg?branch=master)](https://travis-ci.org/peter-evans/nominatim-k8s)
+[![CircleCI](https://circleci.com/gh/peter-evans/nominatim-k8s/tree/master.svg?style=svg)](https://circleci.com/gh/peter-evans/nominatim-k8s/tree/master)
 
 [Nominatim](https://github.com/openstreetmap/Nominatim) for Kubernetes on Google Container Engine (GKE).
 
@@ -8,11 +9,11 @@ This Docker image and sample Kubernetes configuration files are one solution to 
 
 ## Supported tags and respective `Dockerfile` links
 
-- [`2.3.1`, `2.3`, `latest`  (*2.3/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/2.3)
-- [`2.2.0`, `2.2` (*2.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/2.2)
-- [`2.1.0`, `2.1` (*2.1/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/2.1)
-- [`2.0.1`, `2.0` (*2.0/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/2.0)
-- [`1.2.0`, `1.2` (*1.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/1.2)
+- [`2.3.2`, `2.3`, `latest`  (*2.3/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master)
+- [`2.2.0`, `2.2` (*2.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/archive/2.2)
+- [`2.1.0`, `2.1` (*2.1/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/archive/2.1)
+- [`2.0.1`, `2.0` (*2.0/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/archive/2.0)
+- [`1.2.0`, `1.2` (*1.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/archive/1.2)
 
 ## Usage
 The Docker image can be run standalone without Kubernetes:
