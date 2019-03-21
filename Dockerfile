@@ -1,6 +1,4 @@
-FROM peterevans/trusty-gcloud:1.2.22 as builder
-
-MAINTAINER Peter Evans <pete.evans@gmail.com>
+FROM peterevans/trusty-gcloud:1.2.23 as builder
 
 ENV NOMINATIM_VERSION 3.2.0
 
@@ -42,7 +40,16 @@ RUN cd /srv \
  && make
 
 
-FROM peterevans/trusty-gcloud:1.2.22
+FROM peterevans/trusty-gcloud:1.2.23
+
+LABEL \
+  maintainer="Peter Evans <mail@peterevans.dev>" \
+  org.opencontainers.image.title="nominatim-k8s" \
+  org.opencontainers.image.description="Nominatim for Kubernetes on Google Container Engine (GKE)." \
+  org.opencontainers.image.authors="Peter Evans <mail@peterevans.dev>" \
+  org.opencontainers.image.url="https://github.com/peter-evans/nominatim-k8s" \
+  org.opencontainers.image.vendor="https://peterevans.dev" \
+  org.opencontainers.image.licenses="MIT"
 
 # Let the container know that there is no TTY
 ARG DEBIAN_FRONTEND=noninteractive
