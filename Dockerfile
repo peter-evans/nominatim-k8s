@@ -71,6 +71,7 @@ RUN locale-gen en_US.UTF-8 \
     php-pear \
     php-db \
     curl \
+    ca-certificates \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/* /var/tmp/*
