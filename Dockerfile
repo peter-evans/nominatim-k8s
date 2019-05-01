@@ -1,6 +1,6 @@
 FROM peterevans/trusty-gcloud:1.2.23 as builder
 
-ENV NOMINATIM_VERSION 3.2.0
+ENV NOMINATIM_VERSION 3.3.0
 
 # Let the container know that there is no TTY
 ARG DEBIAN_FRONTEND=noninteractive
