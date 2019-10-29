@@ -8,12 +8,13 @@ This Docker image and sample Kubernetes configuration files are one solution to 
 
 ## Supported tags and respective `Dockerfile` links
 
-- [`2.4.0`, `2.4`, `latest`  (*2.4/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master)
-- [`2.3.3`, `2.3` (*2.3/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/archive/2.3)
-- [`2.2.0`, `2.2` (*2.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/archive/2.2)
-- [`2.1.0`, `2.1` (*2.1/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/archive/2.1)
-- [`2.0.1`, `2.0` (*2.0/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/archive/2.0)
-- [`1.2.0`, `1.2` (*1.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/master/archive/1.2)
+- [`2.5.0`, `2.5`, `latest`  (*2.5/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v2.5.0)
+- [`2.4.0`, `2.4` (*2.4/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v2.4.0)
+- [`2.3.3`, `2.3` (*2.3/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v2.3.3)
+- [`2.2.0`, `2.2` (*2.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v2.2.0)
+- [`2.1.0`, `2.1` (*2.1/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v2.1.0)
+- [`2.0.1`, `2.0` (*2.0/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v2.0.1)
+- [`1.2.0`, `1.2` (*1.2/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v1.2.0)
 
 ## Usage
 The Docker image can be run standalone without Kubernetes:
