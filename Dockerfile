@@ -1,6 +1,6 @@
-FROM peterevans/trusty-gcloud:1.2.23 as builder
+FROM peterevans/xenial-gcloud:1.2.23 as builder
 
-ENV NOMINATIM_VERSION 3.3.0
+ENV NOMINATIM_VERSION 3.4.0
 
 # Let the container know that there is no TTY
 ARG DEBIAN_FRONTEND=noninteractive
@@ -22,9 +22,8 @@ RUN apt-get -y update \
     libgeos-dev \
     libgeos++-dev \
     libproj-dev \
-    postgresql-server-dev-9.3 \
-    php5 \
-    php5-cli \
+    postgresql-server-dev-9.5 \
+    php \
     curl
 
 # Build Nominatim
@@ -40,7 +39,7 @@ RUN cd /srv \
  && make
 
 
-FROM peterevans/trusty-gcloud:1.2.23
+FROM peterevans/xenial-gcloud:1.2.23
 
 LABEL \
   maintainer="Peter Evans <mail@peterevans.dev>" \
@@ -56,21 +55,24 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Set locale and install packages
 ENV LANG C.UTF-8
-RUN locale-gen en_US.UTF-8 \
+RUN apt-get -y update \
+ && apt-get install -y -qq --no-install-recommends locales \
+ && locale-gen en_US.UTF-8 \
  && update-locale LANG=en_US.UTF-8 \
- && apt-get -y update \
  && apt-get install -y -qq --no-install-recommends \
-    postgresql-contrib \
-    postgresql-9.3-postgis-2.1 \
-    postgresql-server-dev-9.3 \
+    postgresql-server-dev-9.5 \
+    postgresql-9.5-postgis-2.2 \
+    postgresql-contrib-9.5 \
     apache2 \
-    php5 \
-    php5-pgsql \
-    php5-intl \
-    libapache2-mod-php5 \
+    php \
+    php-pgsql \
+    libapache2-mod-php \
     php-pear \
     php-db \
+    php-intl \
     curl \
+    ca-certificates \
+    sudo \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/* /var/tmp/*
@@ -85,8 +87,8 @@ COPY local.php /srv/nominatim/build/settings/local.php
 COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Allow remote connections to PostgreSQL
-RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.3/main/pg_hba.conf \
- && echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
+RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.5/main/pg_hba.conf \
+ && echo "listen_addresses='*'" >> /etc/postgresql/9.5/main/postgresql.conf
 
 # Set the entrypoint
 COPY docker-entrypoint.sh /
