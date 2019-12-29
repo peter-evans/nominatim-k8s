@@ -1,6 +1,6 @@
 FROM peterevans/xenial-gcloud:1.2.23 as builder
 
-ENV NOMINATIM_VERSION 3.4.0
+ENV NOMINATIM_VERSION 3.4.1
 
 # Let the container know that there is no TTY
 ARG DEBIAN_FRONTEND=noninteractive
