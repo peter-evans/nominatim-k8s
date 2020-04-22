@@ -14,7 +14,7 @@ NOMINATIM_POSTGRESQL_DATA_PATH=${NOMINATIM_POSTGRESQL_DATA_PATH:="/var/lib/postg
 NOMINATIM_SA_KEY_PATH=${NOMINATIM_SA_KEY_PATH:=""}
 NOMINATIM_PROJECT_ID=${NOMINATIM_PROJECT_ID:=""}
 NOMINATIM_GS_BUCKET=${NOMINATIM_GS_BUCKET:=""}
-
+NOMINATIM_PG_THREADS=${NOMINATIM_PG_THREADS:=2}
 
 if [ "$NOMINATIM_MODE" == "CREATE" ]; then
     
@@ -31,7 +31,7 @@ if [ "$NOMINATIM_MODE" == "CREATE" ]; then
     sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data
     sudo -u postgres psql postgres -c "DROP DATABASE IF EXISTS nominatim"
     useradd -m -p password1234 nominatim
-    sudo -u nominatim /srv/nominatim/build/utils/setup.php --osm-file $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf --all --threads 2
+    sudo -u nominatim /srv/nominatim/build/utils/setup.php --osm-file $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf --all --threads $NOMINATIM_PG_THREADS
 
     if [ ! -z "$NOMINATIM_SA_KEY_PATH" ] && [ ! -z "$NOMINATIM_PROJECT_ID" ] && [ ! -z "$NOMINATIM_GS_BUCKET" ]; then
     
