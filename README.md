@@ -90,6 +90,7 @@ Before deploying, edit the `env` section of both the canary deployment and stabl
 - `NOMINATIM_SA_KEY_PATH` - Path to the JSON service account key. This needs to match the `mountPath` of the volume mounted secret.
 - `NOMINATIM_PROJECT_ID` - Google Cloud project ID.
 - `NOMINATIM_GS_BUCKET` - Google Storage bucket.
+- `NOMINATIM_PG_THREADS` - Number of threads available for PostgreSQL. Defaults to 2.
 
 ## License
 
