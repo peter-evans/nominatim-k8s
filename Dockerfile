@@ -1,6 +1,8 @@
+ARG nominatim_version=3.4.2
+
 FROM peterevans/xenial-gcloud:1.2.23 as builder
 
-ENV NOMINATIM_VERSION 3.4.2
+ARG nominatim_version
 
 # Let the container know that there is no TTY
 ARG DEBIAN_FRONTEND=noninteractive
@@ -28,10 +30,10 @@ RUN apt-get -y update \
 
 # Build Nominatim
 RUN cd /srv \
- && curl --silent -L http://www.nominatim.org/release/Nominatim-$NOMINATIM_VERSION.tar.bz2 -o v$NOMINATIM_VERSION.tar.bz2 \
- && tar xf v$NOMINATIM_VERSION.tar.bz2 \
- && rm v$NOMINATIM_VERSION.tar.bz2 \
- && mv Nominatim-$NOMINATIM_VERSION nominatim \
+ && curl --silent -L http://www.nominatim.org/release/Nominatim-${nominatim_version}.tar.bz2 -o v${nominatim_version}.tar.bz2 \
+ && tar xf v${nominatim_version}.tar.bz2 \
+ && rm v${nominatim_version}.tar.bz2 \
+ && mv Nominatim-${nominatim_version} nominatim \
  && cd nominatim \
  && mkdir build \
  && cd build \
@@ -41,6 +43,8 @@ RUN cd /srv \
 
 FROM peterevans/xenial-gcloud:1.2.23
 
+ARG nominatim_version
+
 LABEL \
   maintainer="Peter Evans <mail@peterevans.dev>" \
   org.opencontainers.image.title="nominatim-k8s" \
@@ -49,7 +53,7 @@ LABEL \
   org.opencontainers.image.url="https://github.com/peter-evans/nominatim-k8s" \
   org.opencontainers.image.vendor="https://peterevans.dev" \
   org.opencontainers.image.licenses="MIT" \
-  app.tag="nominatim$NOMINATIM_VERSION"
+  app.tag="nominatim${nominatim_version}"
 
 # Let the container know that there is no TTY
 ARG DEBIAN_FRONTEND=noninteractive

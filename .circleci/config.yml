@@ -38,6 +38,10 @@ jobs:
           command: |
             docker load -i /tmp/workspace/latest.tar
       - run:
+          name: Inspect Docker image
+          command: |
+            docker inspect $IMAGE_NAME:latest
+      - run:
           name: Test Docker image
           command: |
             docker run -d -e NOMINATIM_PBF_URL=$NOMINATIM_PBF_URL --name nominatim-k8s $IMAGE_NAME:latest
