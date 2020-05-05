@@ -62,15 +62,17 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             IMAGE_TAG=${CIRCLE_TAG/v/''}
+            APP_TAG=$(docker inspect $IMAGE_NAME:latest | jq -r '. | first | .ContainerConfig.Labels."app.tag"')
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:latest-$APP_TAG
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
-            docker push $IMAGE_NAME:latest
-            docker push $IMAGE_NAME:$IMAGE_TAG
-            # If the minor version can be extracted then tag and push
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG-$APP_TAG
+            # If the minor version can be extracted then tag
             MINOR_VERSION=$(echo $CIRCLE_TAG | sed -n "s/^v\([0-9]*.[0-9]*\).[0-9]*$/\1/p")
             if [[ ${#MINOR_VERSION} -gt 0 ]]; then
               docker tag $IMAGE_NAME:latest $IMAGE_NAME:$MINOR_VERSION
-              docker push $IMAGE_NAME:$MINOR_VERSION
+              docker tag $IMAGE_NAME:latest $IMAGE_NAME:$MINOR_VERSION-$APP_TAG
             fi
+            docker push $IMAGE_NAME
 workflows:
   version: 2
   build:

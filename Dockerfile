@@ -1,6 +1,6 @@
 FROM peterevans/xenial-gcloud:1.2.23 as builder
 
-ENV NOMINATIM_VERSION 3.4.1
+ENV NOMINATIM_VERSION 3.4.2
 
 # Let the container know that there is no TTY
 ARG DEBIAN_FRONTEND=noninteractive
@@ -48,7 +48,8 @@ LABEL \
   org.opencontainers.image.authors="Peter Evans <mail@peterevans.dev>" \
   org.opencontainers.image.url="https://github.com/peter-evans/nominatim-k8s" \
   org.opencontainers.image.vendor="https://peterevans.dev" \
-  org.opencontainers.image.licenses="MIT"
+  org.opencontainers.image.licenses="MIT" \
+  app.tag="nominatim$NOMINATIM_VERSION"
 
 # Let the container know that there is no TTY
 ARG DEBIAN_FRONTEND=noninteractive
