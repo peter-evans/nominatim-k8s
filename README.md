@@ -8,7 +8,8 @@ This Docker image and sample Kubernetes configuration files are one solution to 
 
 ## Supported tags and respective `Dockerfile` links
 
-- [`2.5.4`, `2.5`, `latest`, `2.5.4-nominatim3.4.2`, `2.5-nominatim3.4.2`, `latest-nominatim3.4.2`  (*2.5/Dockerfile*)](https://github.com/peter-evans/nominatim-docker/tree/v2.5.4)
+- [`2.6.0`, `2.6`, `latest`, `2.6.0-nominatim3.5.0`, `2.6-nominatim3.5.0`, `latest-nominatim3.5.0`  (*2.6/Dockerfile*)](https://github.com/peter-evans/nominatim-docker/tree/v2.6.0)
+- [`2.5.4`, `2.5`, `2.5.4-nominatim3.4.2`, `2.5-nominatim3.4.2`, `latest-nominatim3.4.2`  (*2.5/Dockerfile*)](https://github.com/peter-evans/nominatim-docker/tree/v2.5.4)
 - [`2.5.3`  (*2.5/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v2.5.3)
 - [`2.4.0`, `2.4` (*2.4/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v2.4.0)
 - [`2.3.3`, `2.3` (*2.3/Dockerfile*)](https://github.com/peter-evans/nominatim-k8s/tree/v2.3.3)
