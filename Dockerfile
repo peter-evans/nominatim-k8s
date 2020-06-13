@@ -1,4 +1,4 @@
-ARG nominatim_version=3.4.2
+ARG nominatim_version=3.5.0
 
 FROM peterevans/xenial-gcloud:1.2.23 as builder
 
@@ -75,6 +75,8 @@ RUN apt-get -y update \
     php-pear \
     php-db \
     php-intl \
+    python3-dev \
+    python3-psycopg2 \
     curl \
     ca-certificates \
     sudo \
