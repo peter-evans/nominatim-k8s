@@ -1,0 +1,20 @@
+---
+image:
+  repository: peterevans/nominatim-k8s
+  tag: latest
+replicas: 1
+nominatim:
+  pbf_url: ''
+  data_label: ''
+  sa_key_path: ''
+  project_id: ''
+  gs_bucket: ''
+  pg_threads: ''
+volumes:
+  nominatim-secret-volume:
+    secretname: nominatim-storage-secret
+    type: secret
+  local-data:
+    path: /data
+    hostpath_type: DirectoryOrCreate
+    type: hostPath

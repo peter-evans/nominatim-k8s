@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nominatim.fullname" . }}
+  labels:
+{{ include "nominatim.labels" . | indent 4 }}
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "nominatim.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
