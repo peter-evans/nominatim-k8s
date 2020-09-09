@@ -17,7 +17,7 @@ NOMINATIM_GS_BUCKET=${NOMINATIM_GS_BUCKET:=""}
 NOMINATIM_PG_THREADS=${NOMINATIM_PG_THREADS:=2}
 
 if [ "$NOMINATIM_MODE" == "CREATE" ]; then
-    
+
     # Retrieve the PBF file
     curl -L $NOMINATIM_PBF_URL --create-dirs -o $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf
     # Allow user accounts read access to the data
@@ -33,8 +33,8 @@ if [ "$NOMINATIM_MODE" == "CREATE" ]; then
     useradd -m -p password1234 nominatim
     sudo -u nominatim /srv/nominatim/build/utils/setup.php --osm-file $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf --all --threads $NOMINATIM_PG_THREADS
 
-    if [ ! -z "$NOMINATIM_SA_KEY_PATH" ] && [ ! -z "$NOMINATIM_PROJECT_ID" ] && [ ! -z "$NOMINATIM_GS_BUCKET" ]; then
-    
+    if [ -n "$NOMINATIM_SA_KEY_PATH" ] && [ -n "$NOMINATIM_PROJECT_ID" ] && [ -n "$NOMINATIM_GS_BUCKET" ]; then
+
         # Stop PostgreSQL
         service postgresql stop
 
@@ -48,16 +48,16 @@ if [ "$NOMINATIM_MODE" == "CREATE" ]; then
 
         # Copy the archive to storage
         gsutil -m cp $NOMINATIM_DATA_PATH/*.tgz* $NOMINATIM_GS_BUCKET/$NOMINATIM_DATA_LABEL
-        
+
         # Start PostgreSQL
         service postgresql start
-        
+
     fi
-    
+
 else
 
-    if [ ! -z "$NOMINATIM_SA_KEY_PATH" ] && [ ! -z "$NOMINATIM_PROJECT_ID" ] && [ ! -z "$NOMINATIM_GS_BUCKET" ]; then
-    
+    if [ -n "$NOMINATIM_SA_KEY_PATH" ] && [ -n "$NOMINATIM_PROJECT_ID" ] && [ -n "$NOMINATIM_GS_BUCKET" ]; then
+
         # Activate the service account to access storage
         gcloud auth activate-service-account --key-file $NOMINATIM_SA_KEY_PATH
         # Set the Google Cloud project ID
@@ -68,16 +68,16 @@ else
         gsutil -m cp $NOMINATIM_GS_BUCKET/$NOMINATIM_DATA_LABEL/*.tgz* $NOMINATIM_DATA_PATH
 
         # Remove any files present in the target directory
-        rm -rf $NOMINATIM_POSTGRESQL_DATA_PATH/*
-        
+        rm -rf ${NOMINATIM_POSTGRESQL_DATA_PATH:?}/*
+
         # Extract the archive
         cat $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.tgz_* | tar xz -C $NOMINATIM_POSTGRESQL_DATA_PATH --strip-components=5
-        
+
         # Start PostgreSQL
         service postgresql start
-        
+
     fi
-    
+
 fi
 
 # Tail Apache logs
