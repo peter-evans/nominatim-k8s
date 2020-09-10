@@ -8,10 +8,13 @@ data:
   local.php: |
     <?php
      // Paths
-     @define('CONST_Postgresql_Version', '9.5');
-     @define('CONST_Postgis_Version', '2.2');
+     @define('CONST_Postgresql_Version', '{{ .Values.postgres.version }}');
+     @define('CONST_Postgis_Version', '{{ .Values.postgres.postgis }}');
      // Website settings
      @define('CONST_Website_BaseURL', '/');
+     {{- range .Values.nominatim.config.local }}
+     {{ . }}
+     {{- end }}
     ?>
   settings.php: |
     <?php
@@ -138,3 +141,4 @@ data:
       @define('CONST_Log_DB', false);
       // Set to a file name to enable logging to a file.
       @define('CONST_Log_File', false);
+    ?>

@@ -10,6 +10,11 @@ nominatim:
   project_id: ''
   gs_bucket: ''
   pg_threads: ''
+  config:
+    local: []
+postgres:
+  version: '9.5'
+  postgis: '2.2'
 volumes:
   nominatim-secret-volume:
     secretname: nominatim-storage-secret
