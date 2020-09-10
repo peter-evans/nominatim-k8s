@@ -18,3 +18,5 @@ volumes:
     path: /data
     hostpath_type: DirectoryOrCreate
     type: hostPath
+  nominatim-local-php:
+    type: configMap

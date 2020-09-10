@@ -32,6 +32,10 @@ spec:
             path: {{ $value.path }}
             type: {{ $value.hostpath_type }}
         {{- end }}
+        {{- if eq $value.type "configMap" }}
+          configMap:
+            name: {{ $name }}
+        {{- end }}
       {{- end }}
       containers:
       - name: {{ include "nominatim.name" . }}
@@ -39,7 +43,7 @@ spec:
         env:
         - name: NOMINATIM_MODE
           value: RESTORE
-        - name: NOMINATIM_PBF_URL:
+        - name: NOMINATIM_PBF_URL
           value: {{ .Values.nominatim.pbf_url }}
         - name: NOMINATIM_DATA_LABEL
           value: {{ .Values.nominatim.data_label }}
@@ -52,6 +56,8 @@ spec:
         volumeMounts:
           - name: local-data
             mountPath: /var/lib/postgresql/9.5/data
+          - name: nominatim-local-php
+            mountPath: /srv/nominatim/build/settings
         ports:
         - containerPort: 8080
         readinessProbe:
@@ -72,7 +78,7 @@ spec:
         env:
         - name: NOMINATIM_MODE
           value: CREATE
-        - name: NOMINATIM_PBF_URL:
+        - name: NOMINATIM_PBF_URL
           value: {{ .Values.nominatim.pbf_url }}
         - name: NOMINATIM_DATA_LABEL
           value: {{ .Values.nominatim.data_label }}
@@ -85,3 +91,5 @@ spec:
         volumeMounts:
           - name: local-data
             mountPath: /var/lib/postgresql/9.5/data
+          - name: nominatim-local-php
+            mountPath: /srv/nominatim/build/settings
