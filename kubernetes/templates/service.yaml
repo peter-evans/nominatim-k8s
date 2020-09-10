@@ -6,10 +6,12 @@ metadata:
   labels:
 {{ include "nominatim.labels" . | indent 4 }}
 spec:
+  type: {{ .Values.ingress.serviceType }}
   ports:
   - port: 80
     targetPort: 8080
     protocol: TCP
+    name: http
   selector:
     app.kubernetes.io/name: {{ include "nominatim.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

@@ -15,6 +15,12 @@ nominatim:
 postgres:
   version: '9.5'
   postgis: '2.2'
+ingress:
+  serviceType: ClusterIP
+  enabled: false
+  annotations: {}
+  hosts: []
+  tls: []
 volumes:
   nominatim-secret-volume:
     secretname: nominatim-storage-secret
