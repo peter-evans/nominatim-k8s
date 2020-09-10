@@ -99,7 +99,6 @@ else
 
     # Extract the archive
     cat $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.tgz_* | tar xz -C $NOMINATIM_POSTGRESQL_DATA_PATH --strip-components=5
-    local_postgres_service_control start
   fi
 fi
 
