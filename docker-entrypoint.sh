@@ -70,7 +70,6 @@ copy_google_bucket_data(){
   gsutil -m cp "${source}" "${destination}"
 }
 
-
 if [ "$NOMINATIM_MODE" == "CREATE" ]
 then
   postgres_datadir
