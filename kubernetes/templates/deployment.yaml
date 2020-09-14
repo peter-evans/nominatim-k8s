@@ -53,7 +53,9 @@ spec:
           value: {{ .Values.nominatim.project_id }}
         - name: NOMINATIM_GS_BUCKET
           value: {{ .Values.nominatim.gs_bucket }}
-        volumeMounts:
+        - name: NOMINATIM_POSTGRESQL_DATA_PATH
+          value: {{ .Values.postgres.data_path }}
+      volumeMounts:
           - name: local-data
             mountPath: /var/lib/postgresql/9.5/data
           - name: nominatim-local-php
@@ -88,6 +90,8 @@ spec:
           value: {{ .Values.nominatim.project_id }}
         - name: NOMINATIM_GS_BUCKET
           value: {{ .Values.nominatim.gs_bucket }}
+        - name: NOMINATIM_POSTGRESQL_DATA_PATH
+          value: {{ .Values.postgres.data_path }}
         volumeMounts:
           - name: local-data
             mountPath: /var/lib/postgresql/9.5/data
