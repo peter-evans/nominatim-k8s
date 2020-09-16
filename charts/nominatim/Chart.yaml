@@ -1,0 +1,11 @@
+apiVersion: v1
+appVersion: "3.5.1"
+description: "Nominatim geocoding service"
+name: nominatim
+version: 3.5.1
+sources:
+  - https://nominatim.org/
+  - https://github.com/peter-evans/nominatim-k8s
+maintainers:
+  - name: "Peter Evans"
+    email: "mail@peterevans.dev"

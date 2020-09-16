@@ -30,11 +30,11 @@ Then point your web browser to [http://localhost:8080/](http://localhost:8080/)
 [Nominatim](https://github.com/openstreetmap/Nominatim)'s data import from the PBF file into PostgreSQL can take over an hour for a single country.
 If a pod in a deployment fails, waiting over an hour for a new pod to start could lead to loss of service.
 
-The sample Kubernetes files provide a means of persisting a single database in storage that is used by all pods in the deployment. 
-Each pod having its own database is desirable in order to have no single point of failure. 
+The sample Kubernetes files provide a means of persisting a single database in storage that is used by all pods in the deployment.
+Each pod having its own database is desirable in order to have no single point of failure.
 The alternative to this solution is to maintain a HA PostgreSQL cluster.
 
-PostgreSQL's data directory is archived in storage and restored on new pods. 
+PostgreSQL's data directory is archived in storage and restored on new pods.
 While this may be a crude method of copying the database it is much faster than pg_dump/pg_restore and reduces the pod startup time.
 
 #### Explanation
@@ -75,7 +75,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$SA_E
 
 # Create a secret containing the service account key file
 kubectl create secret generic nominatim-storage-secret --from-file=$KEY_FILE
-```  
+```
 
 #### Deployment configuration
 Before deploying, edit the `env` section of both the canary deployment and stable track deployment.
@@ -87,6 +87,12 @@ Before deploying, edit the `env` section of both the canary deployment and stabl
 - `NOMINATIM_PROJECT_ID` - Google Cloud project ID.
 - `NOMINATIM_GS_BUCKET` - Google Storage bucket.
 - `NOMINATIM_PG_THREADS` - Number of threads available for PostgreSQL. Defaults to 2.
+
+#### Installing Chart
+- `helm repo add nominatim https://peter-evans.github.io/nominatim-k8s`
+- `helm install nominatim/nominatim -n nominatim`
+
+#### External db
 
 ## License
 
