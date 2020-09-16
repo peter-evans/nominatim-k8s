@@ -3,7 +3,7 @@ entries:
   nominatim:
   - apiVersion: v1
     appVersion: 3.5.1
-    created: "2020-09-16T14:54:55.878053-07:00"
+    created: "2020-09-16T15:27:14.458098-07:00"
     description: Nominatim geocoding service
     digest: efa49c69559a3eebb5f9eeb65516f0b4d1714aa4cf655fdf7fdcb21aab99cb7d
     maintainers:
@@ -14,6 +14,6 @@ entries:
     - https://nominatim.org/
     - https://github.com/peter-evans/nominatim-k8s
     urls:
-    - https://JoshuaJackson-jobvite.github.io/nominatim/nominatim-3.5.1.tgz
+    - https://peter-evans.github.io/nominatim/nominatim-3.5.1.tgz
     version: 3.5.1
-generated: "2020-09-16T14:54:55.876082-07:00"
+generated: "2020-09-16T15:27:14.452416-07:00"
