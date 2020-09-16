@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 if [ "$NOMINATIM_MODE" != "CREATE" ] && [ "$NOMINATIM_MODE" != "RESTORE" ]; then
     # Default to CREATE
@@ -15,6 +15,12 @@ NOMINATIM_SA_KEY_PATH=${NOMINATIM_SA_KEY_PATH:=""}
 NOMINATIM_PROJECT_ID=${NOMINATIM_PROJECT_ID:=""}
 NOMINATIM_GS_BUCKET=${NOMINATIM_GS_BUCKET:=""}
 NOMINATIM_PG_THREADS=${NOMINATIM_PG_THREADS:=2}
+DB_ADDR=${DB_ADDR:=""}
+DB_PORT=${DB_PORT:="5432"}
+DB_DATABASE=${DB_DATABASE:="postgres"}
+DB_USER=${DB_USER:=""}
+DB_PASS=${DB_PASS:=""}
+LOCAL_DB=${LOCAL_DB:="true"}
 
 download_pbf() {
     # Retrieve the PBF file
@@ -25,9 +31,25 @@ download_pbf() {
 
 local_postgres_service_control() {
   # Controls state of the local postges instance
-  state=$1
-  service postgresql "${state}"
+  if [[ $LOCAL_DB = 'true' ]];
+  then
+    state=$1
+    service postgresql "${state}"
+  else
+    echo "External db detected, skipping local postgres needs"
+  fi
 }
+
+write_pgpass_file() {
+  # creates a pgpass file for the postgres user to connect to an external db
+  # this avoids having to modify all psql commands below
+  if [[ -n ${DB_ADDR} ]]
+  then
+    echo "${DB_ADDR}:${DB_PORT}:${DB_DATABASE}:${DB_USER}:${DB_PASS}" | tee -a /var/lib/postgresql/.pgpass
+    chmod 0600 /var/lib/postgresql/.pgpass
+    chown postgres:postgres /var/lib/postgresql/.pgpass
+  fi
+ }
 
 postgres_datadir() {
   # run initdb if we don't have good contents
@@ -40,11 +62,18 @@ postgres_datadir() {
 
 postgres_initial_setup() {
     # Add/create users
-    sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='nominatim'" | grep -q 1 || sudo -u postgres createuser -s nominatim
-    sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data
-    # drop the existing database if it exists
-    sudo -u postgres psql postgres -c "DROP DATABASE IF EXISTS nominatim"
     useradd -m -p password1234 nominatim
+    if [[ $LOCAL_DB = 'true' ]];
+    then
+      sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='nominatim'" | grep -q 1 || sudo -u postgres createuser -s nominatim
+      sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data
+      # drop the existing database if it exists
+      sudo -u postgres psql postgres -c "DROP DATABASE IF EXISTS nominatim"
+    else
+      sudo -u postgres psql -h "$DB_ADDR" "$DB_DATABASE" -tAc "SELECT 1 FROM pg_roles WHERE rolname='nominatim'" | grep -q 1 || sudo -u postgres createuser -s nominatim -h "$DB_ADDR"
+      sudo -u postgres psql -h "$DB_ADDR" "$DB_DATABASE" -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data -h "$DB_ADDR"
+      sudo -u postgres psql -h "$DB_ADDR" "$DB_DATABASE" -c "DROP DATABASE IF EXISTS nominatim"
+    fi
 }
 
 nominatim_setup() {
@@ -70,6 +99,7 @@ copy_google_bucket_data(){
   gsutil -m cp "${source}" "${destination}"
 }
 
+write_pgpass_file
 if [ "$NOMINATIM_MODE" == "CREATE" ]
 then
   postgres_datadir

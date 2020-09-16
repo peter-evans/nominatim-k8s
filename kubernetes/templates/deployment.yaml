@@ -40,22 +40,15 @@ spec:
       containers:
       - name: {{ include "nominatim.name" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
         - name: NOMINATIM_MODE
           value: RESTORE
-        - name: NOMINATIM_PBF_URL
-          value: {{ .Values.nominatim.pbf_url }}
-        - name: NOMINATIM_DATA_LABEL
-          value: {{ .Values.nominatim.data_label }}
-        - name: NOMINATIM_SA_KEY_PATH
-          value: {{ .Values.nominatim.sa_key_path }}
-        - name: NOMINATIM_PROJECT_ID
-          value: {{ .Values.nominatim.project_id }}
-        - name: NOMINATIM_GS_BUCKET
-          value: {{ .Values.nominatim.gs_bucket }}
-        - name: NOMINATIM_POSTGRESQL_DATA_PATH
-          value: {{ .Values.postgres.data_path }}
-      volumeMounts:
+      {{- range $key, $value := .Values.nominatim.extraEnvVars }}
+        - name: {{ $key }}
+          value: {{ $value }}
+      {{- end }}
+        volumeMounts:
           - name: local-data
             mountPath: /var/lib/postgresql/9.5/data
           - name: nominatim-local-php
@@ -80,18 +73,10 @@ spec:
         env:
         - name: NOMINATIM_MODE
           value: CREATE
-        - name: NOMINATIM_PBF_URL
-          value: {{ .Values.nominatim.pbf_url }}
-        - name: NOMINATIM_DATA_LABEL
-          value: {{ .Values.nominatim.data_label }}
-        - name: NOMINATIM_SA_KEY_PATH
-          value: {{ .Values.nominatim.sa_key_path }}
-        - name: NOMINATIM_PROJECT_ID
-          value: {{ .Values.nominatim.project_id }}
-        - name: NOMINATIM_GS_BUCKET
-          value: {{ .Values.nominatim.gs_bucket }}
-        - name: NOMINATIM_POSTGRESQL_DATA_PATH
-          value: {{ .Values.postgres.data_path }}
+      {{- range $key, $value := .Values.nominatim.extraEnvVars }}
+        - name: {{ $key }}
+          value: {{ $value }}
+      {{- end }}
         volumeMounts:
           - name: local-data
             mountPath: /var/lib/postgresql/9.5/data
