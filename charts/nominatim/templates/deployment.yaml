@@ -72,7 +72,7 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         env:
         - name: NOMINATIM_MODE
-          value: CREATE
+          value: {{ .Values.nominatim.mode }}
       {{- range $key, $value := .Values.nominatim.extraEnvVars }}
         - name: {{ $key }}
           value: {{ $value }}

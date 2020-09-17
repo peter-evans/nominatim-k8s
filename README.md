@@ -1,5 +1,5 @@
 # Nominatim for Kubernetes
-[![](https://images.microbadger.com/badges/image/peterevans/nominatim-k8s.svg)](https://microbadger.com/images/peterevans/nominatim-k8s)
+[![Build Status](https://images.microbadger.com/badges/image/peterevans/nominatim-k8s.svg)](https://microbadger.com/images/peterevans/nominatim-k8s)
 [![CircleCI](https://circleci.com/gh/peter-evans/nominatim-k8s/tree/master.svg?style=svg)](https://circleci.com/gh/peter-evans/nominatim-k8s/tree/master)
 
 [Nominatim](https://github.com/openstreetmap/Nominatim) for Kubernetes on Google Container Engine (GKE).
@@ -21,7 +21,7 @@ docker run -d -p 8080:8080 \
 --name nominatim peterevans/nominatim-k8s:latest
 ```
 Tail the logs to verify the database has been built and Apache is serving requests:
-```
+```bash
 docker logs -f <CONTAINER ID>
 ```
 Then point your web browser to [http://localhost:8080/](http://localhost:8080/)
@@ -37,7 +37,7 @@ The alternative to this solution is to maintain a HA PostgreSQL cluster.
 PostgreSQL's data directory is archived in storage and restored on new pods.
 While this may be a crude method of copying the database it is much faster than pg_dump/pg_restore and reduces the pod startup time.
 
-#### Explanation
+### Explanation
 Initial deployment flow:
 
 1. Create a secret that contains the JSON key of a Google Cloud IAM service account that has read/write permissions to Google Storage.
@@ -53,7 +53,7 @@ To update the live deployment with new PBF data:
 3. Delete the canary deployment.
 4. Perform a rolling update on the stable track deployment to create pods using the new database.
 
-#### Creating the secret
+### Creating the secret
 
 ```bash
 # Google Cloud project ID and service account details
@@ -77,7 +77,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$SA_E
 kubectl create secret generic nominatim-storage-secret --from-file=$KEY_FILE
 ```
 
-#### Deployment configuration
+### Deployment configuration
 Before deploying, edit the `env` section of both the canary deployment and stable track deployment.
 
 - `NOMINATIM_MODE` - `CREATE` from PBF data, or `RESTORE` from Google Storage.

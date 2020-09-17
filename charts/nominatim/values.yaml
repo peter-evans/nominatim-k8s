@@ -9,6 +9,7 @@ nominatim:
   ##   extraEnvVars:
   ##     - name: VAR
   ##       value: VALUE
+  mode: 'CREATE'
   extraEnvVars:
     NOMINATIM_PBF_URL: ''
     NOMINATIM_DATA_LABEL: ''
