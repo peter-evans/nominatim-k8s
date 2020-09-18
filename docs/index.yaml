@@ -3,7 +3,7 @@ entries:
   nominatim:
   - apiVersion: v1
     appVersion: 3.5.1
-    created: "2020-09-17T14:15:29.127966-07:00"
+    created: "2020-09-18T11:49:37.913214-07:00"
     description: Nominatim geocoding service
     digest: 9e8794e8e84d23b7abb5a7e815b20c50698c5abb1994ac372857af00df7d0d24
     maintainers:
@@ -14,13 +14,13 @@ entries:
     - https://nominatim.org/
     - https://github.com/peter-evans/nominatim-k8s
     urls:
-    - https://joshuajackson-jobvite.github.io/nominatim-k8s/nominatim-3.5.1.tgz
+    - https://jobvite-inc.github.io/nominatim-k8s/nominatim-3.5.1.tgz
     version: 3.5.1
   - apiVersion: v1
     appVersion: 3.5.1
-    created: "2020-09-17T14:15:29.127394-07:00"
+    created: "2020-09-18T11:49:37.907548-07:00"
     description: Nominatim geocoding service
-    digest: 017f82ffaba0dacf451b16d6836909d18bf033a1a54243e2e2032552d389a16b
+    digest: a7d0bb1f46c9ba8a791994c3bbcd0fa1a184d0c6f41084825bbe6e87bab83d40
     maintainers:
     - email: mail@peterevans.dev
       name: Peter Evans
@@ -29,6 +29,6 @@ entries:
     - https://nominatim.org/
     - https://github.com/peter-evans/nominatim-k8s
     urls:
-    - https://joshuajackson-jobvite.github.io/nominatim-k8s/nominatim-3.5.1.1.tgz
+    - https://jobvite-inc.github.io/nominatim-k8s/nominatim-3.5.1.1.tgz
     version: 3.5.1.1
-generated: "2020-09-17T14:15:29.124946-07:00"
+generated: "2020-09-18T11:49:37.906027-07:00"

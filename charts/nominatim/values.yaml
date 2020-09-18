@@ -1,4 +1,5 @@
 ---
+resourceType: deployment
 image:
   repository: peterevans/nominatim-k8s
   tag: latest
@@ -29,6 +30,11 @@ ingress:
   annotations: {}
   hosts: []
   tls: []
+persistence:
+  enabled: false
+  accessModes:
+    - ReadWriteOnce
+  size: 8Gi
 volumes:
   nominatim-secret-volume:
     secretname: nominatim-storage-secret

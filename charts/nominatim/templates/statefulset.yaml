@@ -1,7 +1,6 @@
-{{- if eq .Values.resourceType "deployment" }}
----
+{{- if or (eq .Values.resourceType "statefulset") (not (contains .Values.resourceType "deployment")) }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "nominatim.fullname" . }}
   labels:
@@ -50,6 +49,10 @@ spec:
           value: {{ $value }}
       {{- end }}
         volumeMounts:
+        {{- if .Values.persistence.enabled }}
+          - name: data
+            mountPath: /srv/nominatim/data/downloads
+        {{- end }}
           - name: local-data
             mountPath: "/var/lib/postgresql/{{ .Values.postgres.version }}/data"
           - name: nominatim-local-php
@@ -79,8 +82,28 @@ spec:
           value: {{ $value }}
       {{- end }}
         volumeMounts:
+        {{- if .Values.persistence.enabled }}
+          - name: data
+            mountPath: /srv/nominatim/data/downloads
+        {{- end  }}
           - name: local-data
             mountPath: "/var/lib/postgresql/{{ .Values.postgres.version }}/data"
           - name: nominatim-local-php
             mountPath: /srv/nominatim/build/settings
+{{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          {{- range .Values.persistence.accessModes }}
+            - {{ . | quote }}
+          {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+      {{- if .Values.persistence.storageClass }}
+        storageClassName: {{ .Values.persistence.storageClass }}
+      {{- end }}
+{{- end }}
 {{- end }}
