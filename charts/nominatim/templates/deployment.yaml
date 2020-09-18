@@ -1,0 +1,86 @@
+{{- if eq .Values.resourceType "deployment" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nominatim.fullname" . }}
+  labels:
+{{ include "nominatim.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "nominatim.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "nominatim.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      securityContext:
+        # postgres security group
+        fsGroup: 102
+      volumes:
+      {{- range $name, $value := .Values.volumes }}
+        - name: {{ $name }}
+        {{- if eq $value.type "secret" }}
+          secret:
+            secretName: {{ $name }}
+        {{- end }}
+        {{- if eq $value.type "hostPath" }}
+          hostPath:
+            path: {{ $value.path }}
+            type: {{ $value.hostpath_type }}
+        {{- end }}
+        {{- if eq $value.type "configMap" }}
+          configMap:
+            name: {{ $name }}
+        {{- end }}
+      {{- end }}
+      containers:
+      - name: {{ include "nominatim.name" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: NOMINATIM_MODE
+          value: RESTORE
+      {{- range $key, $value := .Values.nominatim.extraEnvVars }}
+        - name: {{ $key }}
+          value: {{ $value }}
+      {{- end }}
+        volumeMounts:
+          - name: local-data
+            mountPath: "/var/lib/postgresql/{{ .Values.postgres.version }}/data"
+          - name: nominatim-local-php
+            mountPath: /srv/nominatim/build/settings
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /search
+            port: 8080
+          initialDelaySeconds: 30
+          timeoutSeconds: 1
+      initContainers:
+      - name: volume-permissions
+        image: busybox
+        command: ['sh', '-c', "chown -R 102:107 /var/lib/postgresql/{{ .Values.postgres.version }}/data"]
+        volumeMounts:
+          - name: local-data
+            mountPath: "/var/lib/postgresql/{{ .Values.postgres.version }}/data"
+      - name: "init-{{ include "nominatim.name" . }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        env:
+        - name: NOMINATIM_MODE
+          value: {{ .Values.nominatim.mode }}
+      {{- range $key, $value := .Values.nominatim.extraEnvVars }}
+        - name: {{ $key }}
+          value: {{ $value }}
+      {{- end }}
+        volumeMounts:
+          - name: local-data
+            mountPath: "/var/lib/postgresql/{{ .Values.postgres.version }}/data"
+          - name: nominatim-local-php
+            mountPath: /srv/nominatim/build/settings
+{{- end }}
