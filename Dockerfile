@@ -1,6 +1,6 @@
-ARG nominatim_version=3.5.1
+ARG nominatim_version=3.5.2
 
-FROM peterevans/xenial-gcloud:1.2.23 as builder
+FROM ubuntu:focal as builder
 
 ARG nominatim_version
 
@@ -24,9 +24,17 @@ RUN apt-get -y update \
     libgeos-dev \
     libgeos++-dev \
     libproj-dev \
-    postgresql-server-dev-9.5 \
     php \
-    curl
+    curl \
+    ca-certificates \
+    gnupg \
+    lsb-release
+
+# Install postgres
+RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+  && sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+  && apt-get update \
+  && apt-get install -y -qq postgresql-13 postgresql-13-postgis-3 postgresql-server-dev-13
 
 # Build Nominatim
 RUN cd /srv \
@@ -41,7 +49,7 @@ RUN cd /srv \
  && make
 
 
-FROM peterevans/xenial-gcloud:1.2.23
+FROM ubuntu:focal
 
 ARG nominatim_version
 
@@ -65,9 +73,6 @@ RUN apt-get -y update \
  && locale-gen en_US.UTF-8 \
  && update-locale LANG=en_US.UTF-8 \
  && apt-get install -y -qq --no-install-recommends \
-    postgresql-server-dev-9.5 \
-    postgresql-9.5-postgis-2.2 \
-    postgresql-contrib-9.5 \
     apache2 \
     php \
     php-pgsql \
@@ -80,7 +85,18 @@ RUN apt-get -y update \
     curl \
     ca-certificates \
     sudo \
- && apt-get clean \
+    gnupg \
+    lsb-release \
+    less
+
+# Install postgres
+RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+  && sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+  && apt-get update \
+  && apt-get install -y -qq postgresql-13 postgresql-13-postgis-3 postgresql-server-dev-13
+
+
+RUN apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/* /var/tmp/*
 
@@ -94,8 +110,9 @@ COPY local.php /srv/nominatim/build/settings/local.php
 COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Allow remote connections to PostgreSQL
-RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.5/main/pg_hba.conf \
- && echo "listen_addresses='*'" >> /etc/postgresql/9.5/main/postgresql.conf
+RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/13/main/pg_hba.conf \
+ && echo "listen_addresses='*'" >> /etc/postgresql/13/main/postgresql.conf \
+ && echo "include_dir='/postgresql_conf.d/'" >> /etc/postgresql/13/main/postgresql.conf
 
 # Set the entrypoint
 COPY docker-entrypoint.sh /
