@@ -87,7 +87,10 @@ RUN apt-get -y update \
     sudo \
     gnupg \
     lsb-release \
-    less
+    less \
+    libboost-dev \
+    libboost-system-dev \
+    libboost-filesystem-dev
 
 # Install postgres
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
