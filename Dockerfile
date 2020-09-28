@@ -93,13 +93,16 @@ RUN apt-get -y update \
     libboost-filesystem-dev \
     supervisor \
     osmium-tool \
-    wget
+    wget \
+    python3-pip
 
 # Install postgres
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
   && sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
   && apt-get update \
   && apt-get install -y -qq postgresql-13 postgresql-13-postgis-3 postgresql-server-dev-13
+
+RUN pip3 install osmium
 
 RUN apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
