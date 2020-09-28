@@ -91,7 +91,9 @@ RUN apt-get -y update \
     libboost-dev \
     libboost-system-dev \
     libboost-filesystem-dev \
-    supervisor
+    supervisor \
+    osmium-tool \
+    wget
 
 # Install postgres
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
@@ -99,11 +101,13 @@ RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
   && apt-get update \
   && apt-get install -y -qq postgresql-13 postgresql-13-postgis-3 postgresql-server-dev-13
 
-
 RUN apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && rm -rf /tmp/* /var/tmp/* \
   && mkdir -p /var/log/supervisor
+
+# Setup user
+RUN useradd -ms /bin/bash nominatim
 
 # Setup supervisord
 COPY assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -113,6 +117,8 @@ COPY --from=builder /srv/nominatim /srv/nominatim
 
 # Configure Nominatim
 COPY assets/local.php /srv/nominatim/build/settings/local.php
+COPY assets/import_multiple_regions.sh /srv/nominatim/build/utils/import_multiple_regions.sh
+COPY assets/update_multiple_regions.sh /srv/nominatim/build/utils/update_multiple_regions.sh
 
 # Configure Apache
 COPY assets/nominatim.conf /etc/apache2/sites-enabled/000-default.conf
