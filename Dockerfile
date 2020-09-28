@@ -1,4 +1,4 @@
-ARG nominatim_version=3.5.1
+ARG nominatim_version=3.5.2
 
 FROM peterevans/xenial-gcloud:1.2.23 as builder
 
@@ -72,6 +72,7 @@ RUN apt-get -y update \
     php \
     php-pgsql \
     libapache2-mod-php \
+    libboost-filesystem-dev \
     php-pear \
     php-db \
     php-intl \
