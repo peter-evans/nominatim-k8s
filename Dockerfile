@@ -94,7 +94,8 @@ RUN apt-get -y update \
     supervisor \
     osmium-tool \
     wget \
-    python3-pip
+    python3-pip \
+    tree
 
 # Install postgres
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
