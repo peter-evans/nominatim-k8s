@@ -69,10 +69,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Set locale and install packages
 ENV LANG C.UTF-8
 RUN apt-get -y update \
- && apt-get install -y -qq --no-install-recommends locales \
- && locale-gen en_US.UTF-8 \
- && update-locale LANG=en_US.UTF-8 \
- && apt-get install -y -qq --no-install-recommends \
+  && apt-get install -y -qq --no-install-recommends locales \
+  && locale-gen en_US.UTF-8 \
+  && update-locale LANG=en_US.UTF-8 \
+  && apt-get install -y -qq --no-install-recommends \
     apache2 \
     php \
     php-pgsql \
@@ -90,7 +90,8 @@ RUN apt-get -y update \
     less \
     libboost-dev \
     libboost-system-dev \
-    libboost-filesystem-dev
+    libboost-filesystem-dev \
+    supervisor
 
 # Install postgres
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
@@ -100,22 +101,29 @@ RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
 
 
 RUN apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
- && rm -rf /tmp/* /var/tmp/*
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /tmp/* /var/tmp/* \
+  && mkdir -p /var/log/supervisor
+
+# Setup supervisord
+COPY assets/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Copy the application from the builder image
 COPY --from=builder /srv/nominatim /srv/nominatim
 
 # Configure Nominatim
-COPY local.php /srv/nominatim/build/settings/local.php
+COPY assets/local.php /srv/nominatim/build/settings/local.php
 
 # Configure Apache
-COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
+COPY assets/nominatim.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Allow remote connections to PostgreSQL
-RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/13/main/pg_hba.conf \
- && echo "listen_addresses='*'" >> /etc/postgresql/13/main/postgresql.conf \
- && echo "include_dir='/postgresql_conf.d/'" >> /etc/postgresql/13/main/postgresql.conf
+RUN echo "host    all             all             127.0.0.1/32            trust" >> /etc/postgresql/13/main/pg_hba.conf \
+  && echo "host    all             all             0.0.0.0/0            md5" >> /etc/postgresql/13/main/pg_hba.conf \
+  && echo "listen_addresses = '*'" >> /etc/postgresql/13/main/postgresql.conf \
+  && echo "log_destination = 'stderr'" >> /etc/postgresql/13/main/postgresql.conf \
+  && echo "log_checkpoints = on" >> /etc/postgresql/13/main/postgresql.conf \
+  && echo "include_dir = '/postgresql_conf.d/'" >> /etc/postgresql/13/main/postgresql.conf
 
 # Set the entrypoint
 COPY docker-entrypoint.sh /
