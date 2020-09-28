@@ -25,6 +25,7 @@ touch2() { mkdir -p "$(dirname "$1")" && touch "$1" ; }
 # Configuration section: Variables in this section should be set according to your requirements
 
 NOMINATIM_PG_THREADS=${NOMINATIM_PG_THREADS:=2}
+NOMINATIM_CACHE=${NOMINATIM_CACHE:=8000}
 
 # REPLACE WITH LIST OF YOUR "COUNTRIES":
 
@@ -85,5 +86,5 @@ ${COMBINEFILES} -o combined.osm.pbf
 
 echo "===================================================================="
 echo "Updating nominatim db"
-${UPDATEFILE} --import-file ${UPDATEDIR}/tmp/combined.osm.pbf 2>&1
+${UPDATEFILE} --import-file ${UPDATEDIR}/tmp/combined.osm.pbf --osm2pgsql-cache $NOMINATIM_CACHE 2>&1
 echo "===================================================================="
