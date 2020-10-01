@@ -3,8 +3,8 @@
 set -ex
 
 if [ "$NOMINATIM_MODE" != "CREATE" ] && [ "$NOMINATIM_MODE" != "RESTORE" ] && [ "$NOMINATIM_MODE" != "UPDATE" ]; then
-    # Default to CREATE
-    NOMINATIM_MODE="CREATE"
+    # Default to do nothing
+    NOMINATIM_MODE=""
 fi
 
 # Defaults
