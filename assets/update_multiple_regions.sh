@@ -81,10 +81,10 @@ do
 done
 
 
-echo "${COMBINEFILES} -o combined.osm.pbf"
-${COMBINEFILES} -o combined.osm.pbf
+echo "${COMBINEFILES} -o /tmp/combined.osm.pbf"
+${COMBINEFILES} -o /tmp/combined.osm.pbf
 
 echo "===================================================================="
 echo "Updating nominatim db"
-${UPDATEFILE} --import-file ${UPDATEDIR}/tmp/combined.osm.pbf --osm2pgsql-cache $NOMINATIM_CACHE 2>&1
+${UPDATEFILE} --import-file /tmp/combined.osm.pbf --osm2pgsql-cache $NOMINATIM_CACHE 2>&1
 echo "===================================================================="
