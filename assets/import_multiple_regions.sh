@@ -73,7 +73,7 @@ do
     wget ${DOWNURL} --progress=dot:mega -O $IMPORTFILEPATH
 
     touch2 ${DIR}/sequence.state
-    pyosmium-get-changes -O $IMPORTFILEPATH -f ${DIR}/sequence.state -v
+    pyosmium-get-changes -O $IMPORTFILEPATH -f ${DIR}/sequence.state -vv
 
     COMBINEFILES="${COMBINEFILES} ${IMPORTFILEPATH}"
     echo $IMPORTFILE

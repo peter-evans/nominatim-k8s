@@ -21,6 +21,8 @@
 
 touch2() { mkdir -p "$(dirname "$1")" && touch "$1" ; }
 
+mkdir2() { mkdir -p "$(dirname "$1")" ; }
+
 # ******************************************************************************
 # Configuration section: Variables in this section should be set according to your requirements
 
@@ -33,7 +35,7 @@ COUNTRIES=${COUNTRIES:="europe/monaco europe/andorra"}
 
 # SET TO YOUR NOMINATIM build FOLDER PATH:
 
-NOMINATIMBUILD="/srv/nominatim/build"
+NOMINATIMBUILD=${NOMINATIMBUILD:="/srv/nominatim/build"}
 SETUPFILE="$NOMINATIMBUILD/utils/setup.php"
 UPDATEFILE="$NOMINATIMBUILD/utils/update.php"
 
@@ -44,7 +46,7 @@ UPDATEDIR=${NOMINATIM_DATA_PATH:="/srv/nominatim/data"}
 # SET TO YOUR replication server URL:
 
 BASEURL="https://download.geofabrik.de"
-DOWNCOUNTRYPOSTFIX="-latest.osm.pbf"
+DOWNCOUNTRYPOSTFIX="-updates.osm.pbf"
 
 # End of configuration section
 # ******************************************************************************
@@ -64,16 +66,13 @@ do
     echo "===================================================================="
     DIR="$UPDATEDIR/$COUNTRY"
     FILE="$DIR/configuration.txt"
-    DOWNURL="$BASEURL/$COUNTRY$DOWNCOUNTRYPOSTFIX"
+    DOWNURL="$BASEURL/$COUNTRY-updates/"
     IMPORTFILE=$COUNTRY$DOWNCOUNTRYPOSTFIX
     IMPORTFILEPATH=${UPDATEDIR}/tmp/${IMPORTFILE}
-    FILENAME=${COUNTRY//[\/]/_}
 
-    touch2 $IMPORTFILEPATH
-    wget ${DOWNURL} --progress=dot:mega -O $IMPORTFILEPATH
-
+    mkdir2 $IMPORTFILEPATH
     touch2 ${DIR}/sequence.state
-    pyosmium-get-changes -O $IMPORTFILEPATH -f ${DIR}/sequence.state -v
+    pyosmium-get-changes -f ${DIR}/sequence.state -o $IMPORTFILEPATH -vv --server $DOWNURL --size 1000
 
     COMBINEFILES="${COMBINEFILES} ${IMPORTFILEPATH}"
     echo $IMPORTFILE
@@ -87,4 +86,5 @@ ${COMBINEFILES} -o /tmp/combined.osm.pbf
 echo "===================================================================="
 echo "Updating nominatim db"
 ${UPDATEFILE} --import-file /tmp/combined.osm.pbf --osm2pgsql-cache $NOMINATIM_CACHE 2>&1
+${UPDATEFILE} --index
 echo "===================================================================="
