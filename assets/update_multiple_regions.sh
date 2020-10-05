@@ -86,5 +86,5 @@ ${COMBINEFILES} -o /tmp/combined.osm.pbf
 echo "===================================================================="
 echo "Updating nominatim db"
 ${UPDATEFILE} --import-file /tmp/combined.osm.pbf --osm2pgsql-cache $NOMINATIM_CACHE 2>&1
-${UPDATEFILE} --index --index-instances 3
+${UPDATEFILE} --index --index-instances $NOMINATIM_PG_THREADS
 echo "===================================================================="
