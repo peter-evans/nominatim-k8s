@@ -38,7 +38,7 @@ if [ "$NOMINATIM_MODE" == "CREATE" ]; then
     useradd -m -p password1234 nominatim
     sudo -u nominatim /srv/nominatim/build/utils/setup.php --osm-file $NOMINATIM_DATA_PATH/$NOMINATIM_DATA_LABEL.osm.pbf --all --threads $NOMINATIM_PG_THREADS
 
-    if [ [ -n "$NOMINATIM_SA_KEY_PATH" ] && [ -n "$NOMINATIM_PROJECT_ID" ] && [ -n "$NOMINATIM_GS_BUCKET" ] ] || [ -n "$NOMINATIM_STORAGE_PATH" ] ; then
+    if ( [ -n "$NOMINATIM_SA_KEY_PATH" ] && [ -n "$NOMINATIM_PROJECT_ID" ] && [ -n "$NOMINATIM_GS_BUCKET" ] ) || [ -n "$NOMINATIM_STORAGE_PATH" ] ; then
 
         # Stop PostgreSQL
         service postgresql stop
@@ -66,7 +66,7 @@ if [ "$NOMINATIM_MODE" == "CREATE" ]; then
 
 else
 
-    if [ [ -n "$NOMINATIM_SA_KEY_PATH" ] && [ -n "$NOMINATIM_PROJECT_ID" ] && [ -n "$NOMINATIM_GS_BUCKET" ] ] || [ -n "$NOMINATIM_STORAGE_PATH" ] ; then
+    if ( [ -n "$NOMINATIM_SA_KEY_PATH" ] && [ -n "$NOMINATIM_PROJECT_ID" ] && [ -n "$NOMINATIM_GS_BUCKET" ] ) || [ -n "$NOMINATIM_STORAGE_PATH" ] ; then
         # Copy the archive from storage
         mkdir -p $NOMINATIM_DATA_PATH
         if [ -n "$NOMINATIM_STORAGE_PATH" ] ; then
