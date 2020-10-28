@@ -19,6 +19,7 @@ spec:
   selector:
     matchLabels:
       app: nominatim
+      track: canary
   template:
     metadata:
       labels:

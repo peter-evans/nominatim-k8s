@@ -21,6 +21,10 @@ spec:
       app: nominatim
       track: stable
   template:
+      metadata:
+      labels:
+        app: nominatim
+        track: stable
     spec:
       containers:
       - name: nominatim-k8s
