@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nominatim
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: nominatim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nominatim-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nominatim
+      track: canary
+  template:
+    metadata:
+      labels:
+        app: nominatim
+        track: canary
+    spec:
+      containers:
+      - name: nominatim-k8s
+        image: peterevans/nominatim-k8s:latest
+        env:
+        - name: NOMINATIM_MODE
+          value: CREATE
+        - name: NOMINATIM_PBF_URL
+          value: "http://download.geofabrik.de/asia/maldives-latest.osm.pbf"
+        - name: NOMINATIM_DATA_LABEL
+          value: maldives-20161213
+        - name: NOMINATIM_STORAGE_PATH
+          value: "/mnt/azure"
+        volumeMounts:
+        - name: azure
+          mountPath: /mnt/azure
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /search
+            port: 8080
+          initialDelaySeconds: 30
+          timeoutSeconds: 1
+      volumes:
+      - name: azure
+        azureFile:
+          secretName: azure-storage-secret
+          shareName: azure
+          readOnly: false
