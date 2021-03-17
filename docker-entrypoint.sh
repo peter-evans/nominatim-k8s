@@ -44,4 +44,7 @@ elif [ "$NOMINATIM_MODE" == "UPDATE" ]; then
 
 fi
 
+chown -R postgres:postgres /var/lib/postgresql/
+chmod -R 0750 /var/lib/postgresql/
+
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
