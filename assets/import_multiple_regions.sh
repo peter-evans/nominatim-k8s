@@ -70,7 +70,7 @@ do
     FILENAME=${COUNTRY//[\/]/_}
 
     touch2 $IMPORTFILEPATH
-    wget ${DOWNURL} --progress=dot:mega -O $IMPORTFILEPATH
+    wget ${DOWNURL} --no-check-certificate --progress=dot:mega -O $IMPORTFILEPATH
 
     touch2 ${DIR}/sequence.state
     pyosmium-get-changes -O $IMPORTFILEPATH -f ${DIR}/sequence.state -vv
