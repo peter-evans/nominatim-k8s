@@ -1,6 +1,6 @@
 # Nominatim for Kubernetes
-[![](https://images.microbadger.com/badges/image/peterevans/nominatim-k8s.svg)](https://microbadger.com/images/peterevans/nominatim-k8s)
-[![CircleCI](https://circleci.com/gh/peter-evans/nominatim-k8s/tree/master.svg?style=svg)](https://circleci.com/gh/peter-evans/nominatim-k8s/tree/master)
+
+Forked from [github.com/peter-evans/nominatim-k8s](https://github.com/peter-evans/nominatim-k8s).
 
 [Nominatim](https://github.com/openstreetmap/Nominatim) for Kubernetes on Google Container Engine (GKE).
 
