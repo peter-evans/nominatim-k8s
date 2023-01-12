@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
     types: [opened, reopened, synchronize]
   release:
@@ -33,7 +33,7 @@ jobs:
         if [ "${GITHUB_EVENT_NAME}" == "pull_request" ]; then
           echo "##[set-output name=tags;]quay.io/rebuy/nominatim-k8s:${GITHUB_HEAD_REF}"
         else
-          echo "##[set-output name=tags;]quay.io/rebuy/nominatim-k8s:master,\
+          echo "##[set-output name=tags;]quay.io/rebuy/nominatim-k8s:master,quay.io/rebuy/nominatim-k8s:main\
             quay.io/rebuy/nominatim-k8s:latest"
         fi
       id: generate_tags_pr
